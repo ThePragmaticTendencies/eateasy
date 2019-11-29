@@ -1,24 +1,12 @@
-import { utils } from '@/js/utils'
+import RepositoryBase from '@/repository/repositoryBase.js'
 
-export class RepositoryBase {
-  constructor(dbRef) {
-    this._listeners = []
-    this._dbRef = dbRef
-  }
 
-  add(address, object) {
-  return this._getDbRefFor(address)
-    .set(object)
-  }
-
-  update(address, object) {
-  return this._getDbRefFor(address)
-    .update(object)
-  }
-
-  delete(address) {
-  return this._getDbRefFor(address)
-    .set(null)
+export class IngredientRepository extends RepositoryBase {
+  constructor(dbRef, userId) {
+    super(dbRef)
+    this.userID = userId
+    this.spendingsChildName = `${userId}_spendings`
+    this.spendingStatisticsChildName = `${userId}_spending_statistics`
   }
 
   disconnect(){
