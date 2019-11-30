@@ -1,14 +1,12 @@
 <template>
-  <div>
-    Whoa!
-  </div>
+<div>
+  <span>{{ingredient.name}}</span>
+</div>
 </template>
 
 <script>
-
 export default {
   name: 'Ingredient',
-  props: ['name', 'fodmap', 'action']
+  props: ['ingredient', 'action']
 }
-
 </script>

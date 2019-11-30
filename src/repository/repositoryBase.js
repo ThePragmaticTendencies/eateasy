@@ -1,6 +1,4 @@
-import { utils } from '@/js/utils'
-
-export class RepositoryBase {
+export default class RepositoryBase {
   constructor(dbRef) {
     this._listeners = []
     this._dbRef = dbRef
@@ -21,36 +19,38 @@ export class RepositoryBase {
     .set(null)
   }
 
-  disconnect(){
+  disconnect() {
     this._listeners.forEach((listener) => {
-      this.removeListener(listener)
+      this._removeListener(listener)
     })
 
     this._listeners = []
   }
 
-  removeListener(listener) {
-    this._dbRef.off(listener.type, listener.callback)
+  subscribeDbEvent(childName, type, action) {
+    let callback = this._getDbRefFor(childName)
+    .orderByKey()
+    .on(type, (snap) => {
+      action(snap)
+    })
+
+    this._registerListener(callback, type)
   }
 
-  _registerListener(callback, type) {
-    this._listeners.push({callback: callback, type: type})
+  getOnce(childName) {
+    return this._getDbRefFor(childName)
+    .once('value')
   }
 
   _getDbRefFor(childName) {
     return this._dbRef.child(childName)
   }
 
-  _attachActionToChildDb(childName, type, action) {
-    let callback = this._dbRef.child(childName)
-    .orderByKey()
-    .on(type, (snap) => {
-      action(snap)
-    })
+  _registerListener(callback, type) {
+    this._listeners.push({callback: callback, type: type})
   }
 
-  _getOnce(childName) {
-    return this._dbRef.child(childName)
-    .once('value')
+  _removeListener(listener) {
+    this._dbRef.off(listener.type, listener.callback)
   }
 }
